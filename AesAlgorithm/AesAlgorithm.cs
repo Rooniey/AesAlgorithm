@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AesAlgorithm
 {
     public class AesAlgorithm
     {
-        public AesAlgorithm(byte[] key)
+        private static readonly int STATE_ROWS = 4;
+        private static readonly int STATE_COLUMNS = 4;
+
+        public AesAlgorithm(byte[,] key)
         {
             keys.Add(key);
             switch (keys.Count)
@@ -24,32 +28,47 @@ namespace AesAlgorithm
             GenerateKeys();
         }
 
-        public List<byte[]> Encrypt(List<byte[]> data)
+        public List<byte[]> Encrypt(List<byte[,]> data)
         {
             return null;
         }
 
-        public List<byte[]> Decrypt(List<byte[]> encryptedData)
+        public List<byte[]> Decrypt(List<byte[,]> encryptedData)
         {
             return null;
         }
 
         private void GenerateKeys()
         {
-
         }
 
-        private void MixColumns()
+        public void MixColumns(byte[,] state)
         {
+            for (int i = 0; i < STATE_COLUMNS; i++)
+            {
+                byte[,] column = state.GetColumn(i);
+                byte[,] newColumn = TableConstants.GALOIS_MATRIX.Multiply(column);
+                state.SetColumn(newColumn, i);
+            }
 
+            Console.WriteLine("fajno");
         }
 
-        private void AddRoundKey()
+        public void AddRoundKey(byte[,] state, int round)
         {
+            byte[,] roundKey = keys[round];
 
+            for (int row = 0; row < STATE_ROWS; row++)
+            {
+                for (int column = 0; column < STATE_COLUMNS; column++)
+                {
+                    //XOR on corresponding bytes in state and roundKey matrix
+                    state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
+                }
+            }
         }
 
         private int numberOfRounds;
-        private List<byte[]> keys = new List<byte[]>();
+        private List<byte[,]> keys = new List<byte[,]>();
     }
 }
