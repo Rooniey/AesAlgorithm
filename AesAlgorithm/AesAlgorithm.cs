@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AesAlgorithm
 {
@@ -39,6 +40,9 @@ namespace AesAlgorithm
 
         private void GenerateKeys()
         {
+            int TEN = 10;
+            keys = KeyGen.GenerateKeys(keys, TEN);
+
         }
 
         public void MixColumns(byte[,] state)
@@ -61,6 +65,7 @@ namespace AesAlgorithm
                 {
                     //XOR on corresponding bytes in state and roundKey matrix
                     state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
+                    // pewnie zmiana row z column przy kluczu; bo niebede zamienial wszedzie miejscami u siebie xd
                 }
             }
         }
