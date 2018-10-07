@@ -2,7 +2,6 @@
 {
     public class TableConstants
     {
-
         public static readonly byte[,] GALOIS_MATRIX =
         {
             { 2, 3, 1, 1 },

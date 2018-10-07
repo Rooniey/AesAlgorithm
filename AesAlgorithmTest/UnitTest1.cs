@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AesAlgorithm;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 namespace AesAlgorithmTest
 {
     [TestClass]
@@ -21,7 +23,7 @@ namespace AesAlgorithmTest
         [TestMethod]
         public void AddRoundKey()
         {
-            //special key to compare the output, set key in method implementation 
+            //special key to compare the output, set key in method implementation
             //            byte[,] roundKey = new byte[,]
             //            {
             //                {0xa0, 0x88, 0x23, 0x2a},
@@ -39,6 +41,18 @@ namespace AesAlgorithmTest
                 {0x81, 0x19, 0xd3, 0x26},
                 {0xe5, 0x9a, 0x7a, 0x4c}
             }, 2);
+        }
+
+        [TestMethod]
+        public void ConvertToAesBlock()
+        {
+            AesDataProcessor processor = new AesDataProcessor();
+
+            processor.ConvertToAesBlocks(new byte[]
+                {
+                    1, 2, 3, 4, 5, 6, 7, 8, 9
+                }
+            );
         }
     }
 }

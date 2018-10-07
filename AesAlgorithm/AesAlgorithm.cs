@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AesAlgorithm
 {
     public class AesAlgorithm
     {
-        private static readonly int STATE_ROWS = 4;
-        private static readonly int STATE_COLUMNS = 4;
+        public static readonly int STATE_ROWS = 4;
+        public static readonly int STATE_COLUMNS = 4;
 
         public AesAlgorithm(byte[,] key)
         {
@@ -50,8 +49,6 @@ namespace AesAlgorithm
                 byte[,] newColumn = TableConstants.GALOIS_MATRIX.Multiply(column);
                 state.SetColumn(newColumn, i);
             }
-
-            Console.WriteLine("fajno");
         }
 
         public void AddRoundKey(byte[,] state, int round)
