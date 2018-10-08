@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AesAlgorithm
+namespace AesAlgorithm.Utils
 {
     public static class MatrixOperations
     {
