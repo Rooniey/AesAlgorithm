@@ -62,6 +62,17 @@ namespace AesAlgorithm
             }
         }
 
+        public void ShiftRows(byte[,] a)
+        {
+            for (int i = 1; i < STATE_ROWS; i++)
+            {
+                for (int j = 0; j < STATE_COLUMNS; j++)
+                {
+                    a[i, j] = (byte)(a[i, j] << i);
+                }
+            }
+        }
+
         public void MixColumns(byte[,] state)
         {
             for (int i = 0; i < STATE_COLUMNS; i++)
