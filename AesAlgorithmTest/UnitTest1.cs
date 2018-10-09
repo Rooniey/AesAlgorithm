@@ -1,5 +1,6 @@
 ﻿using AesAlgorithm;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace AesAlgorithmTest
 {
@@ -53,6 +54,21 @@ namespace AesAlgorithmTest
                     1, 2, 3, 4, 5, 6, 7, 8, 9
                 }
             );
+        }
+
+        [TestMethod]
+        public void generateKeyswithKeyGen()
+        {
+            List<byte[,]> keys = new List<byte[,]>();
+            keys.Add(new byte[4,4] {
+                { 0xaa, 0xbb, 0xcc, 0xdd },
+                { 0x0a, 0x0b, 0x0c, 0x0d },
+                { 0xa0, 0xb0, 0xc0, 0xd0 },
+                { 0x01, 0x02, 0x03, 0x04 },
+            });
+
+            keys = KeyGen.GenerateKeys(keys, 10);
+            System.Console.WriteLine(keys);
         }
     }
 }
