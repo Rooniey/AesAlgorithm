@@ -1,4 +1,5 @@
-﻿using System;
+using AesAlgorithm.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace AesAlgorithm
@@ -7,6 +8,7 @@ namespace AesAlgorithm
     {
         public static readonly int STATE_ROWS = 4;
         public static readonly int STATE_COLUMNS = 4;
+        public static readonly int[] KEY_SIZES = new int[] { 128, 192, 256 };
 
         public AesAlgorithm(byte[,] key)
         {
