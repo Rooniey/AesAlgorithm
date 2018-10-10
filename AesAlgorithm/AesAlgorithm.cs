@@ -47,6 +47,57 @@ namespace AesAlgorithm
 
         }
 
+        private int GetLeftPartIndex(byte a)
+        {
+            return a >> 4;
+        }
+
+        private int GetRightPartIndex(byte a)
+        {
+            return (0x0f & a);
+        }
+
+        public void SubstituteBytes(byte[,] a)
+        {
+            for(int i = 0; i<STATE_ROWS; i++)
+            {
+                for (int j = 0; j < STATE_COLUMNS; j++)
+                {
+                    a[i, j] = TableConstants.RijndaelSBox[GetLeftPartIndex(a[i, j]), GetRightPartIndex(a[i, j])];
+                }
+            }
+        }
+
+        public byte[,] ShiftRows(byte[,] a)
+        {
+            byte[,] b = new byte[STATE_ROWS, STATE_COLUMNS];
+
+            for (int i = 0; i < STATE_ROWS; i++)
+            {
+                for (int j = 0; j < STATE_COLUMNS; j++)
+                {
+                    b[i, j] = a[i, (j + i) % STATE_COLUMNS];
+                }
+            }
+
+            return b;
+        }
+
+        public byte[,] ReverseShiftRows(byte[,] a)
+        {
+            byte[,] b = new byte[STATE_ROWS, STATE_COLUMNS];
+            for (int i = 0; i < STATE_ROWS; i++)
+            {
+                for (int j = STATE_COLUMNS-1; j > 0; j--)
+                {
+                    b[i, j] = a[i, (j + i) % STATE_COLUMNS];
+                }
+            }
+            return b;
+            
+        }
+
+
         public void MixColumns(byte[,] state)
         {
             for (int i = 0; i < STATE_COLUMNS; i++)
