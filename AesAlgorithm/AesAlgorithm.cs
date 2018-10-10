@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+using AesAlgorithm.Utils;
+using System;
+using System.Collections.Generic;
 
 namespace AesAlgorithm
 {
@@ -6,6 +8,7 @@ namespace AesAlgorithm
     {
         public static readonly int STATE_ROWS = 4;
         public static readonly int STATE_COLUMNS = 4;
+        public static readonly int[] KEY_SIZES = new int[] { 128, 192, 256 };
 
         public AesAlgorithm(byte[,] key)
         {
@@ -39,6 +42,9 @@ namespace AesAlgorithm
 
         private void GenerateKeys()
         {
+            int TEN = 10;
+            keys = KeyGen.GenerateKeys(keys, TEN);
+
         }
 
         private int GetLeftPartIndex(byte a)
@@ -112,6 +118,7 @@ namespace AesAlgorithm
                 {
                     //XOR on corresponding bytes in state and roundKey matrix
                     state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
+                    // pewnie zmiana row z column przy kluczu; bo niebede zamienial wszedzie miejscami u siebie xd
                 }
             }
         }

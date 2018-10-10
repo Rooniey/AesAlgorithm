@@ -47,9 +47,11 @@
     <Compile Include="Data\IDataSource.cs" />
     <Compile Include="Data\FileDataSource.cs" />
     <Compile Include="Data\TextDataSource.cs" />
-    <Compile Include="MatrixOperations.cs" />
+    <Compile Include="Utils\MatrixOperations.cs" />
+    <Compile Include="KeyGen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TableConstants.cs" />
+    <Compile Include="Utils\TextUtility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
