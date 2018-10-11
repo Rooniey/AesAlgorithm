@@ -1,16 +1,15 @@
 using AesAlgorithm.Utils;
 using System;
 using System.Collections.Generic;
+using AesAlgorithm.Constants;
+using static AesAlgorithm.Constants.AesParameters;
 
 namespace AesAlgorithm
 {
-    public class AesAlgorithm
+    public class AesAlgorithmImp
     {
-        public static readonly int STATE_ROWS = 4;
-        public static readonly int STATE_COLUMNS = 4;
-        public static readonly int[] KEY_SIZES = new int[] { 128, 192, 256 };
 
-        public AesAlgorithm(byte[,] key)
+        public AesAlgorithmImp(byte[,] key)
         {
             keys.Add(key);
             switch (keys.Count)
@@ -30,12 +29,31 @@ namespace AesAlgorithm
             GenerateKeys();
         }
 
-        public List<byte[]> Encrypt(List<byte[,]> data)
+        public List<byte[,]> Encrypt(List<byte[,]> data)
         {
-            return null;
+            List<byte[,]> result = new List<byte[,]>();
+
+            foreach (var dataPart in data)
+            {
+                byte[,] encryptedBytes = dataPart;
+                AddRoundKey(encryptedBytes, 0);
+                for (int i = 1; i < numberOfRounds; i++)
+                {                   
+                    SubstituteBytes(encryptedBytes);
+                    encryptedBytes = ShiftRows(encryptedBytes);
+                    MixColumns(encryptedBytes);
+                    AddRoundKey(encryptedBytes, i);
+                }
+                SubstituteBytes(encryptedBytes);
+                encryptedBytes = ShiftRows(encryptedBytes);
+                AddRoundKey(encryptedBytes, numberOfRounds);
+                result.Add(encryptedBytes);
+            }
+
+            return result;
         }
 
-        public List<byte[]> Decrypt(List<byte[,]> encryptedData)
+        public List<byte[,]> Decrypt(List<byte[,]> encryptedData)
         {
             return null;
         }
@@ -117,7 +135,8 @@ namespace AesAlgorithm
                 for (int column = 0; column < STATE_COLUMNS; column++)
                 {
                     //XOR on corresponding bytes in state and roundKey matrix
-                    state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
+                    //pamietac o zmianie !!
+                    state[row, column] = (byte)(state[row, column] ^ roundKey[column, row]);
                     // pewnie zmiana row z column przy kluczu; bo niebede zamienial wszedzie miejscami u siebie xd
                 }
             }

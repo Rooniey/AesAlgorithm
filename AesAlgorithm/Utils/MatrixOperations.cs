@@ -1,9 +1,27 @@
 ﻿using System;
+using AesAlgorithm.Constants;
+using static AesAlgorithm.Constants.AesParameters;
 
 namespace AesAlgorithm.Utils
 {
     public static class MatrixOperations
     {
+
+        
+        public static byte[,] ConvertToKeyMatrix(byte[] initialKey)
+        {
+            byte[,] keyMatrix = new byte[STATE_COLUMNS,STATE_ROWS];
+            for (int column = 0; column < 4; column++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    keyMatrix[column, j] = initialKey[column * 4 + j];
+                }
+            }
+
+            return keyMatrix;
+        }
+
         //return new instance of byte[,] representing operation's result
         public static byte[,] Multiply(this byte[,] a, byte[,] b)
         {

@@ -132,9 +132,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AesAlgorithm\AesAlgorithm.csproj">
+    <ProjectReference Include="..\AesAlgorithm\Cryptography.csproj">
       <Project>{6dd5332d-938a-4de9-8e52-6cb0e0f2b459}</Project>
-      <Name>AesAlgorithm</Name>
+      <Name>Cryptography</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

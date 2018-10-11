@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AesAlgorithm.Constants;
 
 namespace AesAlgorithm
 {
     public static class KeyGen
     {
         // first and second hex digits are sbox indexes
-       private static byte getSboxValue(byte input) => TableConstants.SBox[input / 16, input % 16];
+       private static byte GetSboxValue(byte input) => TableConstants.RijndaelSBox[input / 16, input % 16];
        
         public static List<byte[,]> GenerateKeys(List<byte[,]> keys, int numberOfRounds)
         {  
@@ -18,14 +16,14 @@ namespace AesAlgorithm
             {
                 byte[] temp = new byte[4]
                 {
-                    keys[i][3,0], keys[i][3,1], keys[i][3,2], keys[i][3,4]
+                    keys[i][3,0], keys[i][3,1], keys[i][3,2], keys[i][3,3]
                 };
 
-                temp = rotateBytesLeft(temp);
+                temp = RotateBytesLeft(temp);
 
                 for(int row = 0; row < 4; row++)
                 {
-                    temp[row] = getSboxValue(temp[row]); 
+                    temp[row] = GetSboxValue(temp[row]); 
                 }
 
                 temp[0] ^= Rcon[i + 1];
@@ -61,7 +59,7 @@ namespace AesAlgorithm
             return keys;
         }
 
-        private static byte[] rotateBytesLeft(byte[] byteArrayInput) // assume length of 4
+        private static byte[] RotateBytesLeft(byte[] byteArrayInput) // assume length of 4
         {
             byte[] byteArray = new byte[4];
             Array.Copy(byteArrayInput, byteArray, 4);

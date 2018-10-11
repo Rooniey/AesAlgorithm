@@ -1,6 +1,7 @@
 ﻿using AesAlgorithm;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using AesAlgorithm.Data.Processors;
 
 namespace AesAlgorithmTest
 {
@@ -10,7 +11,7 @@ namespace AesAlgorithmTest
         [TestMethod]
         public void Multiplication()
         {
-            AesAlgorithm.AesAlgorithm aes = new AesAlgorithm.AesAlgorithm(new byte[4, 4]);
+            AesAlgorithm.AesAlgorithmImp aes = new AesAlgorithm.AesAlgorithmImp(new byte[4, 4]);
 
             aes.MixColumns(new byte[,]
             {
@@ -33,7 +34,7 @@ namespace AesAlgorithmTest
             //                {0x17, 0xb1, 0x39, 0x05}
             //            };
 
-            AesAlgorithm.AesAlgorithm aes = new AesAlgorithm.AesAlgorithm(new byte[4, 4]);
+            AesAlgorithm.AesAlgorithmImp aes = new AesAlgorithm.AesAlgorithmImp(new byte[4, 4]);
 
             aes.AddRoundKey(new byte[,]
             {
@@ -49,7 +50,7 @@ namespace AesAlgorithmTest
         {
             AesDataProcessor processor = new AesDataProcessor();
 
-            processor.ConvertToAesBlocks(new byte[]
+            processor.ConvertToBlocks(new byte[]
                 {
                     1, 2, 3, 4, 5, 6, 7, 8, 9
                 }

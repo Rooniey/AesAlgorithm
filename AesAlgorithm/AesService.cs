@@ -1,4 +1,5 @@
-﻿using AesAlgorithm.Data;
+﻿using AesAlgorithm.Data.Processors;
+using AesAlgorithm.Data.Sources;
 
 namespace AesAlgorithm
 {
@@ -10,9 +11,10 @@ namespace AesAlgorithm
             Decryption
         }
 
-        private readonly AesDataProcessor _dataProcessor = new AesDataProcessor();
-
         public IDataSource DataSource { get; set; }
+
+        public IDataProcessor DataProcessor { get; set; }
+        
 
         public AesService(IDataSource dataSource)
         {

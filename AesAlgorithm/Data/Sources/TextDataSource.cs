@@ -1,7 +1,7 @@
-﻿using AesAlgorithm.Utils;
-using System;
+﻿using System;
+using AesAlgorithm.Utils;
 
-namespace AesAlgorithm.Data
+namespace AesAlgorithm.Data.Sources
 {
     public class TextDataSource : IDataSource
     {

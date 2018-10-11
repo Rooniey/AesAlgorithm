@@ -1,4 +1,4 @@
-﻿namespace AesAlgorithm.Data
+﻿namespace AesAlgorithm.Data.Sources
 {
     public interface IDataSource
     {

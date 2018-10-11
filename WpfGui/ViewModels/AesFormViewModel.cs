@@ -2,7 +2,12 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using AesAlgorithm;
+using AesAlgorithm.Constants;
+using AesAlgorithm.Data.Processors;
+using AesAlgorithm.Utils;
 using WpfGui.CustomFramework;
 using WpfGui.Models;
 using WpfGui.Validators;
@@ -54,7 +59,16 @@ namespace WpfGui.ViewModels
             set => SetProperty(ref _isFileEncryption, value);
         }
 
-        public List<int> KeyLengths => AesAlgorithm.AesAlgorithm.KEY_SIZES.ToList();
+        private string _encryptedString;
+
+        public string EncryptedString
+        {
+            get => _encryptedString;
+            set => SetProperty(ref _encryptedString, value);
+        }
+
+
+        public List<int> KeyLengths => AesParameters.KEY_LENGTHS.ToList();
         public List<Encoding> Encodings => Enum.GetValues(typeof(Encoding)).OfType<Encoding>().ToList();
 
         public void ChooseFile()
@@ -65,6 +79,26 @@ namespace WpfGui.ViewModels
             if (fileDialog.ShowDialog() == true)
             {
                 FileDataSource.FilePath = fileDialog.FileName;
+            }
+        }
+
+        public void Encrypt()
+        {
+            if (!IsFileEncryption)
+            {
+                byte[] data = System.Text.Encoding.ASCII.GetBytes(TextDataSource.Text);
+                AesDataProcessor processor = new AesDataProcessor();
+                byte[,] key =
+                    MatrixOperations.ConvertToKeyMatrix(TextUtility.ToByteArray(Cipherkey.Cipherkey,
+                        Cipherkey.SelectedEncoding));
+                AesAlgorithmImp algorithm = new AesAlgorithmImp(key);
+                List<byte[,]> blocks = processor.ConvertToBlocks(data);
+                var encryptedBlocks = algorithm.Encrypt(blocks);
+                var encBytes = processor.ConvertToByteArray(encryptedBlocks);
+                EncryptedString = System.Text.Encoding.ASCII.GetString(encBytes);
+                Console.WriteLine("kupa");
+
+
             }
         }
     }

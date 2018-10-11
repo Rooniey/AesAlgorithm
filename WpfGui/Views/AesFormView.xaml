@@ -175,6 +175,7 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     Margin="0 0 10 0"
+                    x:Name="TextDataSource_Text"
                     Style="{StaticResource InlineTextBox}"
                     materialDesign:HintAssist.Hint="Plaintext to encrypt"
                     IsEnabled="{Binding Path=IsFileEncryption, Converter={StaticResource BoolInverseConverter}}" />
@@ -182,6 +183,7 @@
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
+                    x:Name="EncryptedString"
                     Margin="0 0 10 0"
                     Style="{StaticResource InlineTextBox}"
                     materialDesign:HintAssist.Hint="Encrypted text"
@@ -220,6 +222,7 @@
         <Button
             Grid.Row="1"
             Grid.Column="1"
+            x:Name="Encrypt"
             Margin="0 30 0 32"
             HorizontalAlignment="Right"
             Style="{StaticResource MaterialDesignRaisedDarkButton}"

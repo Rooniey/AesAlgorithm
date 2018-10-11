@@ -33,5 +33,23 @@ namespace AesAlgorithm.Utils
                     return null;
             }
         }
+
+        public static string ToText(this byte[] data, Encoding encoding)
+        {
+            switch (encoding)
+            {
+                case Encoding.Ascii:
+                    return System.Text.Encoding.ASCII.GetString(data);
+
+                case Encoding.Unicode:
+                    return System.Text.Encoding.Unicode.GetString(data);
+
+                case Encoding.Utf8:
+                    return System.Text.Encoding.UTF8.GetString(data);
+
+                default:
+                    return null;
+            }
+        }
     }
 }
