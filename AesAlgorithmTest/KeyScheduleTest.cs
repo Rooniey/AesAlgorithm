@@ -12,7 +12,7 @@ namespace AesAlgorithmTest
         [TestMethod]
         public void CheckKeyGeneration()
         {
-            List<byte[,]> keys = KeyGen2.GenerateKeys(new byte[4, 4]);
+            List<byte[,]> keys = KeyGen.GenerateKeys(new byte[4, 4]);
             byte[,] expectedLastKey = new byte[,]
             {
                 {0xb4, 0x3e, 0x23, 0x6f}, 

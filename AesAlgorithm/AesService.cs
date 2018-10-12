@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Cryptography;
 using Cryptography.Data.Processors;
 using Cryptography.Data.Sources;
 
-namespace AesAlgorithm
+namespace Cryptography
 {
     public class AesService : ISymmetricCryptoService
     {
@@ -18,8 +17,8 @@ namespace AesAlgorithm
         {
             List<byte[,]> blocks = DataProcessor.ConvertToBlocks(dataSource.GetData());
             AesAlgorithmImp aes = new AesAlgorithmImp(key);
-            List<byte[,]> encryptedblocks = aes.Encrypt(blocks);
-            return DataProcessor.ConvertToByteArray(encryptedblocks);
+            List<byte[,]> encryptedBlocks = aes.Encrypt(blocks);
+            return DataProcessor.ConvertToByteArray(encryptedBlocks);
         }
 
         public byte[] Decrypt(byte[] key, IDataSource dataSource)

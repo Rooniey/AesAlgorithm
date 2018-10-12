@@ -50,9 +50,8 @@
     <Compile Include="Data\Processors\IDataProcessor.cs" />
     <Compile Include="Data\Sources\TextDataSource.cs" />
     <Compile Include="ISymmetricCryptoService.cs" />
-    <Compile Include="Utils\KeyGen2.cs" />
-    <Compile Include="Utils\MatrixOperations.cs" />
     <Compile Include="Utils\KeyGen.cs" />
+    <Compile Include="Utils\MatrixOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constants\TableConstants.cs" />
     <Compile Include="Utils\TextUtility.cs" />

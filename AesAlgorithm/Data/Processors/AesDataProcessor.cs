@@ -57,7 +57,7 @@ namespace Cryptography.Data.Processors
         private List<byte> PadDataWithZeroes(byte[] data)
         {
             List<byte> paddedData = data.ToList();
-            int numberOfPaddingBytes = AesParameters.BYTES_IN_BLOCK - (data.Length % AesParameters.BYTES_IN_BLOCK);
+            int numberOfPaddingBytes = data.Length % AesParameters.BYTES_IN_BLOCK;
             for (int i = 0; i < numberOfPaddingBytes; i++)
             {
                 paddedData.Add(0);

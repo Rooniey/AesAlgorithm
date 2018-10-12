@@ -3,15 +3,13 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AesAlgorithm;
-using AesAlgorithm.Utils;
 using Cryptography;
 using Cryptography.Constants;
 using Cryptography.Data.Sources;
 using WpfGui.CustomFramework;
 using WpfGui.Models;
 using WpfGui.Validators;
-using static AesAlgorithm.Utils.TextUtility;
+using static Cryptography.Utils.TextUtility;
 using FileSource = WpfGui.Models.FileSource;
 
 namespace WpfGui.ViewModels
@@ -109,7 +107,6 @@ namespace WpfGui.ViewModels
         public void Encrypt()
         {
             byte[] key = Cipherkey.Cipherkey.ToByteArray(Cipherkey.SelectedEncoding);
-
             if (IsFileEncryption)
             {
                
@@ -117,6 +114,8 @@ namespace WpfGui.ViewModels
             else
             {
                 IDataSource dataSource = new TextDataSource() {Text = TextSource.Text, TextEncoding = TextSource.Encoding};
+
+
                 byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
                 EncryptedString = encryptedBytes.ToText(TextSource.Encoding);
             }

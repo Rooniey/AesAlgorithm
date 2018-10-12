@@ -1,5 +1,5 @@
 ﻿using System;
-using AesAlgorithm.Utils;
+using Cryptography.Utils;
 
 namespace Cryptography.Data.Sources
 {

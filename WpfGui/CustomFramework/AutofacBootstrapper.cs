@@ -3,7 +3,6 @@ using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AesAlgorithm;
 using Cryptography;
 using Cryptography.Data.Processors;
 

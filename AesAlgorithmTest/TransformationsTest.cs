@@ -1,4 +1,4 @@
-﻿using AesAlgorithm;
+﻿using Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static AesAlgorithmTest.TestHelpers.ComparisonHelpers;
 

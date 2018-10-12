@@ -1,93 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Cryptography.Constants;
+using static Cryptography.Constants.AesParameters;
 
-namespace AesAlgorithm.Utils
+namespace Cryptography.Utils
 {
-    public static class KeyGen
+    public class KeyGen
     {
-        // first and second hex digits are sbox indexes
-       private static byte GetSboxValue(byte input) => TableConstants.RijndaelSBox[input / 16, input % 16];
-       
-        public static List<byte[,]> GenerateKeys(List<byte[,]> keys, int numberOfRounds)
-        {  
-            // the first 11 16-byte matrices are always calculated as follows
-            for(int i = 0; i < 10; i++)
-            {
-                byte[] temp = new byte[4]
-                {
-                    keys[i][3,0], keys[i][3,1], keys[i][3,2], keys[i][3,3]
-                };
-
-                temp = RotateBytesLeft(temp);
-
-                for(int row = 0; row < 4; row++)
-                {
-                    temp[row] = GetSboxValue(temp[row]); 
-                }
-
-                temp[0] ^= Rcon[i + 1];
-
-                // xor with the first column of the last key
-                for (int row = 0; row < 4; row++)
-                {
-                    temp[row] ^= keys[i][0, row];
-                }
-
-
-                byte[,] tmpMatrix = new byte[4, 4];
-
-                for(int row = 0; row < 4; row++)
-                {
-                    tmpMatrix[0, row] = temp[row];
-                }
-
-                // xor the 3 leftover columns of the last key with the last new column
-                for(int column = 1; column < 4; column++)
-                {
-                    for(int row = 0; row < 4; row++)
-                    {
-                        tmpMatrix[column, row] = (byte)(keys[i][column, row] ^ tmpMatrix[column - 1, row]);
-                    }
-                }
-
-                keys.Add(tmpMatrix);
-                // schody
-            }
-            
-
-            return keys;
-        }
+        private static readonly byte[] Rcon = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36 };
 
         public static byte[,] ConvertToKeyMatrix(byte[] initialKey)
         {
-            byte[,] keyMatrix = new byte[AesParameters.STATE_COLUMNS, AesParameters.STATE_ROWS];
-            for (int column = 0; column < 4; column++)
+            byte[,] keyMatrix = new byte[STATE_COLUMNS, STATE_ROWS];
+            for (int row = 0; row < 4; row++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int column = 0; column < 4; column++)
                 {
-                    keyMatrix[column, j] = initialKey[column * 4 + j];
+                    keyMatrix[row, column] = initialKey[column*STATE_COLUMNS + row];
                 }
             }
 
             return keyMatrix;
         }
 
-        private static byte[] RotateBytesLeft(byte[] byteArrayInput) // assume length of 4
+        public static List<byte[,]> GenerateKeys(byte[,] primeKey)
         {
-            byte[] byteArray = new byte[4];
-            Array.Copy(byteArrayInput, byteArray, 4);
-
-            byte tmp = byteArray[0];
-            for (int i = 0; i < 3; i++)
+            List<byte[,]> keys = new List<byte[,]>();
+            keys.Add(primeKey);
+            for (int i = 0; i < 10; i++)
             {
-                byteArray[i] = byteArray[i + 1];
-            }
-            byteArray[3] = tmp;
+                byte[,] lastColumnOfLastKey = keys[i].GetColumn(STATE_COLUMNS - 1);
+                lastColumnOfLastKey.CircularRotateLeft();
 
-            return byteArray;
+                for (int j = 0; j < STATE_ROWS; j++)
+                {
+                    byte current = lastColumnOfLastKey[j, 0];
+                    lastColumnOfLastKey[j,0] = TableConstants.RijndaelSBox[current / 16, current % 16];
+                }
+
+                lastColumnOfLastKey[0, 0] ^= Rcon[i];
+                byte[,] column2 = keys[i].GetColumn(0);
+                for (int j = 0; j  < STATE_COLUMNS; j++)
+                {
+                    lastColumnOfLastKey[j, 0] ^= column2[j, 0];
+                }
+
+                byte[,] newKey = new byte[STATE_ROWS,STATE_COLUMNS];
+                newKey.SetColumn(lastColumnOfLastKey, 0);
+                
+                for (int column = 1; column < STATE_COLUMNS; column++)
+                {
+                    newKey.SetColumn(newKey.GetColumn(column-1), column);
+                    for (int row = 0; row < STATE_ROWS; row++)
+                    {
+                        newKey[row, column] ^= keys[i][row, column];
+                    }
+                }
+
+                keys.Add(newKey);
+            }
+
+            return keys;
         }
 
-        private static readonly byte[] Rcon = { 0x8b, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36 };
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AesAlgorithm.Utils
+namespace Cryptography.Utils
 {
     public static class TextUtility
     {
