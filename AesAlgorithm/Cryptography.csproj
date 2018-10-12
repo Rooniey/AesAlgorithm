@@ -7,8 +7,8 @@
     <ProjectGuid>{6DD5332D-938A-4DE9-8E52-6CB0E0F2B459}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AesAlgorithm</RootNamespace>
-    <AssemblyName>AesAlgorithm</AssemblyName>
+    <RootNamespace>Cryptography</RootNamespace>
+    <AssemblyName>Cryptography</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -49,9 +49,10 @@
     <Compile Include="Data\Sources\FileDataSource.cs" />
     <Compile Include="Data\Processors\IDataProcessor.cs" />
     <Compile Include="Data\Sources\TextDataSource.cs" />
-    <Compile Include="ICryptoAlgorithm.cs" />
+    <Compile Include="ISymmetricCryptoService.cs" />
+    <Compile Include="Utils\KeyGen2.cs" />
     <Compile Include="Utils\MatrixOperations.cs" />
-    <Compile Include="KeyGen.cs" />
+    <Compile Include="Utils\KeyGen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constants\TableConstants.cs" />
     <Compile Include="Utils\TextUtility.cs" />

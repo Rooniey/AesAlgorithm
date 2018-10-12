@@ -1,32 +1,33 @@
-using AesAlgorithm.Utils;
 using System;
+using AesAlgorithm.Utils;
 using System.Collections.Generic;
-using AesAlgorithm.Constants;
-using static AesAlgorithm.Constants.AesParameters;
+using Cryptography.Constants;
+using Cryptography.Utils;
+using static Cryptography.Constants.AesParameters;
 
 namespace AesAlgorithm
 {
     public class AesAlgorithmImp
     {
 
-        public AesAlgorithmImp(byte[,] key)
+        public AesAlgorithmImp(byte[] key)
         {
-            keys.Add(key);
-            switch (keys.Count)
+            _keys = KeyGen2.GenerateKeys(KeyGen2.ConvertToKeyMatrix(key));
+            switch (_keys.Count)
             {
                 case 16:
-                    numberOfRounds = 10;
+                    _numberOfRounds = 10;
                     break;
 
                 case 24:
-                    numberOfRounds = 12;
+                    _numberOfRounds = 12;
                     break;
 
                 case 32:
-                    numberOfRounds = 14;
+                    _numberOfRounds = 14;
                     break;
             }
-            GenerateKeys();
+         
         }
 
         public List<byte[,]> Encrypt(List<byte[,]> data)
@@ -35,19 +36,19 @@ namespace AesAlgorithm
 
             foreach (var dataPart in data)
             {
-                byte[,] encryptedBytes = dataPart;
-                AddRoundKey(encryptedBytes, 0);
-                for (int i = 1; i < numberOfRounds; i++)
+                AddRoundKey(dataPart, _keys[0]);
+                for (int i = 1; i < _numberOfRounds; i++)
                 {                   
-                    SubstituteBytes(encryptedBytes);
-                    encryptedBytes = ShiftRows(encryptedBytes);
-                    MixColumns(encryptedBytes);
-                    AddRoundKey(encryptedBytes, i);
+                    SubstituteBytes(dataPart);
+                    ShiftRows(dataPart);
+                    MixColumns(dataPart);
+                    AddRoundKey(dataPart, _keys[i]);
                 }
-                SubstituteBytes(encryptedBytes);
-                encryptedBytes = ShiftRows(encryptedBytes);
-                AddRoundKey(encryptedBytes, numberOfRounds);
-                result.Add(encryptedBytes);
+                SubstituteBytes(dataPart);
+                ShiftRows(dataPart);
+                AddRoundKey(dataPart, _keys[_numberOfRounds]);
+
+                result.Add(dataPart);
             }
 
             return result;
@@ -61,7 +62,7 @@ namespace AesAlgorithm
         private void GenerateKeys()
         {
             int TEN = 10;
-            keys = KeyGen.GenerateKeys(keys, TEN);
+            _keys = KeyGen.GenerateKeys(_keys, TEN);
 
         }
 
@@ -86,19 +87,22 @@ namespace AesAlgorithm
             }
         }
 
-        public byte[,] ShiftRows(byte[,] a)
+        public void ShiftRows(byte[,] a)
         {
-            byte[,] b = new byte[STATE_ROWS, STATE_COLUMNS];
-
-            for (int i = 0; i < STATE_ROWS; i++)
+            for (int i = 1; i < STATE_ROWS; i++)
             {
-                for (int j = 0; j < STATE_COLUMNS; j++)
+                int move = i;
+                while (move > 0)
                 {
-                    b[i, j] = a[i, (j + i) % STATE_COLUMNS];
+                    byte tmp = a[i, 0];
+                    for (int j = 0; j < STATE_COLUMNS - 1; j++)
+                    {
+                        a[i, j] = a[i, j + 1];
+                    }
+                    a[i, STATE_COLUMNS - 1] = tmp;
+                    move--;
                 }
             }
-
-            return b;
         }
 
         public byte[,] ReverseShiftRows(byte[,] a)
@@ -126,10 +130,8 @@ namespace AesAlgorithm
             }
         }
 
-        public void AddRoundKey(byte[,] state, int round)
+        public void AddRoundKey(byte[,] state, byte[,] roundKey)
         {
-            byte[,] roundKey = keys[round];
-
             for (int row = 0; row < STATE_ROWS; row++)
             {
                 for (int column = 0; column < STATE_COLUMNS; column++)
@@ -142,7 +144,7 @@ namespace AesAlgorithm
             }
         }
 
-        private int numberOfRounds;
-        private List<byte[,]> keys = new List<byte[,]>();
+        private int _numberOfRounds;
+        private List<byte[,]> _keys = new List<byte[,]>();
     }
 }

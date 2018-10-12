@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AesAlgorithm.Data.Processors
+namespace Cryptography.Data.Processors
 {
     public interface IDataProcessor
     {

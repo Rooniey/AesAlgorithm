@@ -162,7 +162,7 @@
                         materialDesign:HintAssist.FloatingOffset="0, -24"
                         MinWidth="150"
                         ItemsSource="{Binding Encodings}"
-                        SelectedValue="{Binding TextDataSource.Encoding}">
+                        SelectedValue="{Binding TextSource.Encoding}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}" />
@@ -175,7 +175,7 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     Margin="0 0 10 0"
-                    x:Name="TextDataSource_Text"
+                    x:Name="TextSource_Text"
                     Style="{StaticResource InlineTextBox}"
                     materialDesign:HintAssist.Hint="Plaintext to encrypt"
                     IsEnabled="{Binding Path=IsFileEncryption, Converter={StaticResource BoolInverseConverter}}" />
@@ -207,7 +207,7 @@
                                              Foreground="{DynamicResource PrimaryHueMidBrush}"
                                              VerticalAlignment="Center" />
                 <TextBox
-                        x:Name="FileDataSource_FilePath"
+                        x:Name="FileSource_FilePath"
                         Margin="10 0 20 0"
                         MinWidth="250"
                         MaxWidth="300"

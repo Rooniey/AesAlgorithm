@@ -1,24 +1,33 @@
-﻿using AesAlgorithm.Data.Processors;
-using AesAlgorithm.Data.Sources;
+﻿using System.Collections.Generic;
+using Cryptography;
+using Cryptography.Data.Processors;
+using Cryptography.Data.Sources;
 
 namespace AesAlgorithm
 {
-    public class AesService
+    public class AesService : ISymmetricCryptoService
     {
-        public enum Mode
-        {
-            Encryption,
-            Decryption
-        }
-
-        public IDataSource DataSource { get; set; }
-
         public IDataProcessor DataProcessor { get; set; }
         
-
-        public AesService(IDataSource dataSource)
+        public AesService(IDataProcessor processor)
         {
-            DataSource = dataSource;
+            DataProcessor = processor;
+        }
+
+        public byte[] Encrypt(byte[] key, IDataSource dataSource)
+        {
+            List<byte[,]> blocks = DataProcessor.ConvertToBlocks(dataSource.GetData());
+            AesAlgorithmImp aes = new AesAlgorithmImp(key);
+            List<byte[,]> encryptedblocks = aes.Encrypt(blocks);
+            return DataProcessor.ConvertToByteArray(encryptedblocks);
+        }
+
+        public byte[] Decrypt(byte[] key, IDataSource dataSource)
+        {
+            List<byte[,]> blocks = DataProcessor.ConvertToBlocks(dataSource.GetData());
+            AesAlgorithmImp aes = new AesAlgorithmImp(key);
+            List<byte[,]> decryptedBlocks = aes.Decrypt(blocks);
+            return DataProcessor.ConvertToByteArray(decryptedBlocks);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace AesAlgorithm.Data.Sources
+namespace Cryptography.Data.Sources
 {
     public class FileDataSource : IDataSource
     {

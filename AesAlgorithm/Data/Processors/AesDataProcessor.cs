@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static AesAlgorithm.Constants.AesParameters;
+using Cryptography.Constants;
 
-namespace AesAlgorithm.Data.Processors
+namespace Cryptography.Data.Processors
 {
     public class AesDataProcessor : IDataProcessor
     {
@@ -21,12 +21,12 @@ namespace AesAlgorithm.Data.Processors
 
             for (int i = 0; i < numberOfBlocks; i++)
             {
-                byte[,] block = new byte[STATE_ROWS, STATE_COLUMNS];
+                byte[,] block = new byte[AesParameters.STATE_ROWS, AesParameters.STATE_COLUMNS];
 
-                for (int j = 0; j < BYTES_IN_BLOCK; j++)
+                for (int j = 0; j < AesParameters.BYTES_IN_BLOCK; j++)
                 {
-                    block[j % STATE_ROWS, j / STATE_COLUMNS] =
-                        paddedFlatData[i * BYTES_IN_BLOCK + j];
+                    block[j % AesParameters.STATE_ROWS, j / AesParameters.STATE_COLUMNS] =
+                        paddedFlatData[i * AesParameters.BYTES_IN_BLOCK + j];
                 }
                 blocks.Add(block);
             }
@@ -41,14 +41,14 @@ namespace AesAlgorithm.Data.Processors
                 throw new ArgumentException("AesDataProcessor (ConvertToByteArray): no data to process (null or empty)");
             }
             
-            byte[] flatData = new byte[blocks.Count * BYTES_IN_BLOCK];
+            byte[] flatData = new byte[blocks.Count * AesParameters.BYTES_IN_BLOCK];
 
             for (int i = 0; i < blocks.Count; i++)
             {
-                for (int j = 0; j < BYTES_IN_BLOCK; j++)
+                for (int j = 0; j < AesParameters.BYTES_IN_BLOCK; j++)
                 {
-                    flatData[i * BYTES_IN_BLOCK + j] = blocks[i][j % STATE_ROWS,
-                        j / STATE_COLUMNS];
+                    flatData[i * AesParameters.BYTES_IN_BLOCK + j] = blocks[i][j % AesParameters.STATE_ROWS,
+                        j / AesParameters.STATE_COLUMNS];
                 }
             }
             return flatData;
@@ -57,7 +57,7 @@ namespace AesAlgorithm.Data.Processors
         private List<byte> PadDataWithZeroes(byte[] data)
         {
             List<byte> paddedData = data.ToList();
-            int numberOfPaddingBytes = BYTES_IN_BLOCK - (data.Length % BYTES_IN_BLOCK);
+            int numberOfPaddingBytes = AesParameters.BYTES_IN_BLOCK - (data.Length % AesParameters.BYTES_IN_BLOCK);
             for (int i = 0; i < numberOfPaddingBytes; i++)
             {
                 paddedData.Add(0);

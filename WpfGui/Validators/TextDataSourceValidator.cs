@@ -3,7 +3,7 @@ using WpfGui.Models;
 
 namespace WpfGui.Validators
 {
-    public class TextDataSourceValidator : AbstractValidator<TextDataSource>
+    public class TextDataSourceValidator : AbstractValidator<TextSource>
     {
         public TextDataSourceValidator()
         {

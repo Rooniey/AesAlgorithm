@@ -1,7 +1,7 @@
 ﻿using System;
 using AesAlgorithm.Utils;
 
-namespace AesAlgorithm.Data.Sources
+namespace Cryptography.Data.Sources
 {
     public class TextDataSource : IDataSource
     {

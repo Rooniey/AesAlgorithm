@@ -1,26 +1,26 @@
 ﻿using System;
-using AesAlgorithm.Constants;
-using static AesAlgorithm.Constants.AesParameters;
+using Cryptography.Constants;
 
-namespace AesAlgorithm.Utils
+namespace Cryptography.Utils
 {
     public static class MatrixOperations
     {
-
-        
-        public static byte[,] ConvertToKeyMatrix(byte[] initialKey)
+        public static void CircularRotateLeft(this byte[,] column)
         {
-            byte[,] keyMatrix = new byte[STATE_COLUMNS,STATE_ROWS];
-            for (int column = 0; column < 4; column++)
+            if (column == null || column.GetLength(0) != 4 || column.GetLength(1) != 1)
             {
-                for (int j = 0; j < 4; j++)
-                {
-                    keyMatrix[column, j] = initialKey[column * 4 + j];
-                }
+                throw new ArgumentException($"Matrix can not be circulated");
             }
 
-            return keyMatrix;
+            byte tmp = column[0, 0];
+            for (int i = 0; i < column.GetLength(0) - 1; i++)
+            {
+                column[i, 0] = column[i + 1,0];
+            }
+
+            column[column.GetLength(0) - 1, 0] = tmp;
         }
+
 
         //return new instance of byte[,] representing operation's result
         public static byte[,] Multiply(this byte[,] a, byte[,] b)
@@ -85,7 +85,7 @@ namespace AesAlgorithm.Utils
         }
 
         //modifies existing byte[,], by setting desired column
-        public static byte[,] SetColumn(this byte[,] a, byte[,] column, int columnNumber)
+        public static void SetColumn(this byte[,] a, byte[,] column, int columnNumber)
         {
             int rows = a.GetLength(0);
             int columns = a.GetLength(1);
@@ -103,8 +103,6 @@ namespace AesAlgorithm.Utils
             {
                 a[row, columnNumber] = column[row, 0];
             }
-
-            return a;
         }
     }
 }

@@ -5,9 +5,9 @@ using WpfGui.CustomFramework;
 
 namespace WpfGui.Models
 {
-    public class TextDataSource : ValidatableBindableBase<TextDataSource>
+    public class TextSource : ValidatableBindableBase<TextSource>
     {
-        public TextDataSource(AbstractValidator<TextDataSource> validator) : base(validator)
+        public TextSource(AbstractValidator<TextSource> validator) : base(validator)
         {
         }
 
@@ -27,9 +27,9 @@ namespace WpfGui.Models
             set => SetProperty(ref _encoding, value);
         }
 
-        protected override ValidationContext<TextDataSource> ProvideContext(string propertyName)
+        protected override ValidationContext<TextSource> ProvideContext(string propertyName)
         {
-            return new ValidationContext<TextDataSource>(this,
+            return new ValidationContext<TextSource>(this,
                 new PropertyChain(),
                 new MemberNameValidatorSelector(new[] { propertyName }));
         }

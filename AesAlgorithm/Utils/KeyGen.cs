@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using AesAlgorithm.Constants;
+using Cryptography.Constants;
 
-namespace AesAlgorithm
+namespace AesAlgorithm.Utils
 {
     public static class KeyGen
     {
@@ -57,6 +57,20 @@ namespace AesAlgorithm
             
 
             return keys;
+        }
+
+        public static byte[,] ConvertToKeyMatrix(byte[] initialKey)
+        {
+            byte[,] keyMatrix = new byte[AesParameters.STATE_COLUMNS, AesParameters.STATE_ROWS];
+            for (int column = 0; column < 4; column++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    keyMatrix[column, j] = initialKey[column * 4 + j];
+                }
+            }
+
+            return keyMatrix;
         }
 
         private static byte[] RotateBytesLeft(byte[] byteArrayInput) // assume length of 4

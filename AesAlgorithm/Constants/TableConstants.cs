@@ -1,4 +1,4 @@
-﻿namespace AesAlgorithm.Constants
+﻿namespace Cryptography.Constants
 {
     public static class TableConstants
     {
