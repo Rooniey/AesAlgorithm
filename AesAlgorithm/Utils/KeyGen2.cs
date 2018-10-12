@@ -57,15 +57,11 @@ namespace Cryptography.Utils
                     newKey.SetColumn(newKey.GetColumn(column-1), column);
                     for (int row = 0; row < STATE_ROWS; row++)
                     {
-                        byte current = newKey[row, column];
-                        byte xor = keys[i][row, column];
                         newKey[row, column] ^= keys[i][row, column];
                     }
                 }
 
                 keys.Add(newKey);
-
-
             }
 
             return keys;

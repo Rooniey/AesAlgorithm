@@ -138,7 +138,7 @@ namespace AesAlgorithm
                 {
                     //XOR on corresponding bytes in state and roundKey matrix
                     //pamietac o zmianie !!
-                    state[row, column] = (byte)(state[row, column] ^ roundKey[column, row]);
+                    state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
                     // pewnie zmiana row z column przy kluczu; bo niebede zamienial wszedzie miejscami u siebie xd
                 }
             }
