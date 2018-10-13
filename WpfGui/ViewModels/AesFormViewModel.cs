@@ -4,27 +4,30 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AesAlgorithm;
-using AesAlgorithm.Constants;
-using AesAlgorithm.Data.Processors;
-using AesAlgorithm.Utils;
+using Cryptography;
+using Cryptography.Constants;
+using Cryptography.Data.Sources;
+using Cryptography.Utils;
 using WpfGui.CustomFramework;
 using WpfGui.Models;
 using WpfGui.Validators;
-using static AesAlgorithm.Utils.TextUtility;
+using static Cryptography.Utils.TextUtility;
+using FileSource = WpfGui.Models.FileSource;
 
 namespace WpfGui.ViewModels
 {
     public class AesFormViewModel : BindableBase
     {
         private ILog _logger = LogManager.GetLog(typeof(AesFormViewModel));
+        public ISymmetricCryptoService CryptoService { get; private set; }
 
-        public AesFormViewModel()
+        public AesFormViewModel(ISymmetricCryptoService cryptoService)
         {
             _logger.Info("Initialized AesFormViewModel");
+            CryptoService = cryptoService;
             Cipherkey = new AesCipherkeyCreate(new AesCipherkeyValidator());
-            TextDataSource = new TextDataSource(new TextDataSourceValidator());
-            FileDataSource = new FileDataSource(new FileDataSourceValidator());
+            TextSource = new Models.TextSource(new TextDataSourceValidator());
+            FileDataSource = new FileSource(new FileDataSourceValidator());
         }
 
         private AesCipherkeyCreate _cipherkey;
@@ -35,17 +38,17 @@ namespace WpfGui.ViewModels
             set => SetProperty(ref _cipherkey, value);
         }
 
-        private TextDataSource _textDataSource;
+        private Models.TextSource _textSource;
 
-        public TextDataSource TextDataSource
+        public TextSource TextSource
         {
-            get => _textDataSource;
-            set => SetProperty(ref _textDataSource, value);
+            get => _textSource;
+            set => SetProperty(ref _textSource, value);
         }
 
-        private FileDataSource _fileDataSource;
+        private FileSource _fileDataSource;
 
-        public FileDataSource FileDataSource
+        public FileSource FileDataSource
         {
             get => _fileDataSource;
             set => SetProperty(ref _fileDataSource, value);
@@ -67,6 +70,13 @@ namespace WpfGui.ViewModels
             set => SetProperty(ref _encryptedString, value);
         }
 
+        private string _decryptedString;
+
+        public string DecryptedString
+        {
+            get => _decryptedString;
+            set => SetProperty(ref _decryptedString, value);
+        }
 
         public List<int> KeyLengths => AesParameters.KEY_LENGTHS.ToList();
         public List<Encoding> Encodings => Enum.GetValues(typeof(Encoding)).OfType<Encoding>().ToList();
@@ -82,23 +92,45 @@ namespace WpfGui.ViewModels
             }
         }
 
+        public bool CanEncrypt()
+        {
+            if (Cipherkey.HasErrors) return false;
+            if (IsFileEncryption)
+            {
+                return !FileDataSource.HasErrors;
+            }
+
+            return !TextSource.HasErrors;
+
+        }
+
         public void Encrypt()
         {
-            if (!IsFileEncryption)
+            byte[] key = Cipherkey.Cipherkey.ToByteArray(Cipherkey.SelectedEncoding);
+            if (IsFileEncryption)
             {
-                byte[] data = System.Text.Encoding.ASCII.GetBytes(TextDataSource.Text);
-                AesDataProcessor processor = new AesDataProcessor();
-                byte[,] key =
-                    MatrixOperations.ConvertToKeyMatrix(TextUtility.ToByteArray(Cipherkey.Cipherkey,
-                        Cipherkey.SelectedEncoding));
-                AesAlgorithmImp algorithm = new AesAlgorithmImp(key);
-                List<byte[,]> blocks = processor.ConvertToBlocks(data);
-                var encryptedBlocks = algorithm.Encrypt(blocks);
-                var encBytes = processor.ConvertToByteArray(encryptedBlocks);
-                EncryptedString = System.Text.Encoding.ASCII.GetString(encBytes);
-                Console.WriteLine("kupa");
-
-
+               IDataSource dataSource = new FileDataSource(FileDataSource.FilePath);
+               byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
+                using (var fs = new FileStream("testowy.txt", FileMode.CreateNew))
+                {
+                    fs.Write(encryptedBytes, 0, encryptedBytes.Length);
+                }
+                dataSource = new MemoryDataSource(encryptedBytes);
+                byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
+                using (var fs = new FileStream("testowy2.txt", FileMode.CreateNew))
+                {
+                    fs.Write(decryptedBytes, 0, decryptedBytes.Length);
+                }
+            }
+            else
+            {
+                IDataSource dataSource = new TextDataSource(TextSource.Text, TextSource.Encoding);
+                byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
+                //TODO to HEX display
+                EncryptedString = System.Text.Encoding.UTF8.GetString(encryptedBytes);
+                dataSource = new MemoryDataSource(encryptedBytes);
+                byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
+                DecryptedString = decryptedBytes.ToText(TextSource.Encoding);
             }
         }
     }

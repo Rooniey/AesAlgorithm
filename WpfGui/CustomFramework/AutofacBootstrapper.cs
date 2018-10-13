@@ -3,6 +3,8 @@ using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cryptography;
+using Cryptography.Data.Processors;
 
 namespace WpfGui.CustomFramework
 {
@@ -24,6 +26,8 @@ namespace WpfGui.CustomFramework
             builder.Register<IWindowManager>(c => new WindowManager()).InstancePerLifetimeScope();
             //  register the single event aggregator for this container
             builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
+
+            builder.Register<ISymmetricCryptoService>(c => new AesService());
 
             //builder.Register<AesParameterValidator>(c => new AesParameterValidator()).SingleInstance();
 

@@ -4,9 +4,9 @@ using WpfGui.CustomFramework;
 
 namespace WpfGui.Models
 {
-    public class FileDataSource : ValidatableBindableBase<FileDataSource>
+    public class FileSource : ValidatableBindableBase<FileSource>
     {
-        public FileDataSource(AbstractValidator<FileDataSource> validator) : base(validator)
+        public FileSource(AbstractValidator<FileSource> validator) : base(validator)
         {
         }
 
@@ -18,9 +18,9 @@ namespace WpfGui.Models
             set => SetProperty(ref _filePath, value);
         }
 
-        protected override ValidationContext<FileDataSource> ProvideContext(string propertyName)
+        protected override ValidationContext<FileSource> ProvideContext(string propertyName)
         {
-            return new ValidationContext<FileDataSource>(this,
+            return new ValidationContext<FileSource>(this,
                 new PropertyChain(),
                 new MemberNameValidatorSelector(new[] { propertyName }));
         }

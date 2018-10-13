@@ -4,7 +4,7 @@ using WpfGui.Models;
 
 namespace WpfGui.Validators
 {
-    public class FileDataSourceValidator : AbstractValidator<FileDataSource>
+    public class FileDataSourceValidator : AbstractValidator<FileSource>
     {
         public FileDataSourceValidator()
         {

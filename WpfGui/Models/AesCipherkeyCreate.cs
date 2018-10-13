@@ -1,4 +1,4 @@
-﻿using AesAlgorithm.Utils;
+﻿using Cryptography.Utils;
 using FluentValidation;
 using FluentValidation.Internal;
 using WpfGui.CustomFramework;

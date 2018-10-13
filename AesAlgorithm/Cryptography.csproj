@@ -7,8 +7,8 @@
     <ProjectGuid>{6DD5332D-938A-4DE9-8E52-6CB0E0F2B459}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AesAlgorithm</RootNamespace>
-    <AssemblyName>AesAlgorithm</AssemblyName>
+    <RootNamespace>Cryptography</RootNamespace>
+    <AssemblyName>Cryptography</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -43,17 +43,26 @@
   <ItemGroup>
     <Compile Include="AesAlgorithmImp.cs" />
     <Compile Include="Constants\AesParameters.cs" />
-    <Compile Include="Data\Processors\AesDataProcessor.cs" />
+    <Compile Include="Data\Processors\BlockDataProcessor.cs" />
     <Compile Include="AesService.cs" />
     <Compile Include="Data\Sources\IDataSource.cs" />
     <Compile Include="Data\Sources\FileDataSource.cs" />
     <Compile Include="Data\Processors\IDataProcessor.cs" />
+    <Compile Include="Data\Sources\MemoryDataSource.cs" />
     <Compile Include="Data\Sources\TextDataSource.cs" />
-    <Compile Include="ICryptoAlgorithm.cs" />
-    <Compile Include="Utils\MatrixOperations.cs" />
-    <Compile Include="KeyGen.cs" />
+    <Compile Include="ISymmetricCryptoService.cs" />
+    <Compile Include="Utils\Extensions\ByteArrayExtensions.cs" />
+    <Compile Include="Utils\Factory\AesAlgorithmFactory.cs" />
+    <Compile Include="Utils\Factory\IAlgorithmFactory.cs" />
+    <Compile Include="Utils\KeySchedule\AesKeyExpander256.cs" />
+    <Compile Include="Utils\KeySchedule\AesKeyExpander128And192.cs" />
+    <Compile Include="Utils\KeySchedule\IKeyExpander.cs" />
+    <Compile Include="Utils\KeyProvider\IRoundKeyProvider.cs" />
+    <Compile Include="Utils\KeySchedule\AesKeyExpanderBase.cs" />
+    <Compile Include="Utils\Extensions\ByteMatrixExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constants\TableConstants.cs" />
+    <Compile Include="Utils\KeyProvider\RoundKeyProvider.cs" />
     <Compile Include="Utils\TextUtility.cs" />
   </ItemGroup>
   <ItemGroup />
