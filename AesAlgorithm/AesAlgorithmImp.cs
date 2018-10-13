@@ -53,7 +53,29 @@ namespace Cryptography
 
         public List<byte[,]> Decrypt(List<byte[,]> encryptedData)
         {
-            return null;
+            List<byte[,]> result = new List<byte[,]>();
+
+            foreach (var dataPart in encryptedData)
+            {
+
+                AddRoundKey(dataPart, _keys[_numberOfRounds]);
+
+                for (int i = _numberOfRounds -1; i > 0; i--)
+                {
+                    ReverseSubstituteBytes(dataPart);
+                    ReverseShiftRows(dataPart);
+                    AddRoundKey(dataPart, _keys[i]);
+                    InverseMixColumns(dataPart);
+                }
+
+                ReverseSubstituteBytes(dataPart);
+                ReverseShiftRows(dataPart);
+                AddRoundKey(dataPart, _keys[0]);
+
+                result.Add(dataPart);
+            }
+
+            return result;
         }
 
         private int GetLeftPartIndex(byte a)
@@ -77,6 +99,17 @@ namespace Cryptography
             }
         }
 
+        public void ReverseSubstituteBytes(byte[,] a)
+        {
+            for (int i = 0; i < AesParameters.STATE_ROWS; i++)
+            {
+                for (int j = 0; j < AesParameters.STATE_COLUMNS; j++)
+                {
+                    a[i, j] = TableConstants.InversedRijndaelSBox[GetLeftPartIndex(a[i, j]), GetRightPartIndex(a[i, j])];
+                }
+            }
+        }
+
         public void ShiftRows(byte[,] a)
         {
             for (int i = 1; i < AesParameters.STATE_ROWS; i++)
@@ -95,18 +128,22 @@ namespace Cryptography
             }
         }
 
-        public byte[,] ReverseShiftRows(byte[,] a)
+        public void ReverseShiftRows(byte[,] a)
         {
-            byte[,] b = new byte[AesParameters.STATE_ROWS, AesParameters.STATE_COLUMNS];
-            for (int i = 0; i < AesParameters.STATE_ROWS; i++)
+            for (int i = 1; i < AesParameters.STATE_ROWS; i++)
             {
-                for (int j = AesParameters.STATE_COLUMNS-1; j > 0; j--)
+                int move = i;
+                while (move > 0)
                 {
-                    b[i, j] = a[i, (j + i) % AesParameters.STATE_COLUMNS];
+                    byte tmp = a[i, AesParameters.STATE_COLUMNS - 1];
+                    for (int j = AesParameters.STATE_COLUMNS - 1; j > 0; j--)
+                    {
+                        a[i, j] = a[i, j - 1];
+                    }
+                    a[i, 0] = tmp;
+                    move--;
                 }
             }
-            return b;
-            
         }
 
 
@@ -120,6 +157,16 @@ namespace Cryptography
             }
         }
 
+        public void InverseMixColumns(byte[,] state)
+        {
+            for (int i = 0; i < AesParameters.STATE_COLUMNS; i++)
+            {
+                byte[,] column = state.GetColumn(i);
+                byte[,] newColumn = TableConstants.INV_GALOIS_MATRIX.Multiply(column);
+                state.SetColumn(newColumn, i);
+            }
+        }
+
         public void AddRoundKey(byte[,] state, byte[,] roundKey)
         {
             for (int row = 0; row < AesParameters.STATE_ROWS; row++)
@@ -129,7 +176,6 @@ namespace Cryptography
                     //XOR on corresponding bytes in state and roundKey matrix
                     //pamietac o zmianie !!
                     state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
-                    // pewnie zmiana row z column przy kluczu; bo niebede zamienial wszedzie miejscami u siebie xd
                 }
             }
         }

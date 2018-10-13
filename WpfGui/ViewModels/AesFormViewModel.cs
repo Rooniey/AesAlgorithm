@@ -6,6 +6,7 @@ using System.Linq;
 using Cryptography;
 using Cryptography.Constants;
 using Cryptography.Data.Sources;
+using Cryptography.Utils;
 using WpfGui.CustomFramework;
 using WpfGui.Models;
 using WpfGui.Validators;
@@ -117,7 +118,11 @@ namespace WpfGui.ViewModels
 
 
                 byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
-                EncryptedString = encryptedBytes.ToText(TextSource.Encoding);
+                EncryptedString = System.Text.Encoding.UTF8.GetString(encryptedBytes);
+
+                dataSource = new MemoryDataSource() {Data = encryptedBytes};
+                byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
+                DecryptedString = decryptedBytes.ToText(TextSource.Encoding);
             }
         }
     }

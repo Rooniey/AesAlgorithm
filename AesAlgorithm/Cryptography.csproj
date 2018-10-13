@@ -48,6 +48,7 @@
     <Compile Include="Data\Sources\IDataSource.cs" />
     <Compile Include="Data\Sources\FileDataSource.cs" />
     <Compile Include="Data\Processors\IDataProcessor.cs" />
+    <Compile Include="Data\Sources\MemoryDataSource.cs" />
     <Compile Include="Data\Sources\TextDataSource.cs" />
     <Compile Include="ISymmetricCryptoService.cs" />
     <Compile Include="Utils\KeyGen.cs" />

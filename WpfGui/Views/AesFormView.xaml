@@ -192,6 +192,7 @@
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="2"
+                    x:Name="DecryptedString"
                     Style="{StaticResource InlineTextBox}"
                     materialDesign:HintAssist.Hint="Decrypted text"
                     IsEnabled="false" />

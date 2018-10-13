@@ -1,4 +1,5 @@
-﻿using Cryptography.Utils;
+﻿using System;
+using Cryptography.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,15 @@ namespace AesAlgorithmTest
                 {0xcb, 0x11, 0xcf, 0x8e}
             };
             AssertMatrixEquality(keys[keys.Count-1], expectedLastKey);
+        }
+
+        [TestMethod]
+        public void CheckKeyGeneration2()
+        {
+            byte[] keys = KeyGen.GenerateKeys(new byte[16]);
+            byte[] keys2 = KeyGen.GenerateKeys(new byte[24]);
+            byte[] key3 = KeyGen.GenerateKeys(new byte[32]);
+            Console.WriteLine("fajno");
         }
     }
 }

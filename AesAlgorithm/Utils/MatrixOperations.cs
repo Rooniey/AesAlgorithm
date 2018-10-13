@@ -60,6 +60,10 @@ namespace Cryptography.Utils
                 case 1: return b;
                 case 2: return TableConstants.MC2[b / 16, b % 16];
                 case 3: return TableConstants.MC3[b / 16, b % 16];
+                case 9: return TableConstants.MC9[b / 16, b % 16];
+                case 11: return TableConstants.MC11[b / 16, b % 16];
+                case 13: return TableConstants.MC13[b / 16, b % 16];
+                case 14: return TableConstants.MC14[b / 16, b % 16];
                 default: return 0;
             }
         }
