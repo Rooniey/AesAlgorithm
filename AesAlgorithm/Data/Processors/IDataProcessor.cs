@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Cryptography.Data.Processors
+﻿namespace Cryptography.Data.Processors
 {
-    public interface IDataProcessor
+    public interface IConvertProcessor<T,G>
     {
-        List<byte[,]> ConvertToBlocks(byte[] data);
-        byte[] ConvertToByteArray(List<byte[,]> blocks);
+        T ConvertTo(G data);
+        G ConvertBack(T blocks);
     }
 }

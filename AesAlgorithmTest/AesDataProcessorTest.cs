@@ -8,7 +8,7 @@ namespace AesAlgorithmTest
     [TestClass]
     public class AesDataProcessorTest
     {
-        private AesDataProcessor _aesProcessor;
+        private BlockDataProcessor _blockProcessor;
         private static readonly byte[] _flatData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
         private static readonly byte[] _paddedFlatData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         private static readonly List<byte[,]> _blocks = new List<byte[,]>
@@ -31,13 +31,13 @@ namespace AesAlgorithmTest
         [TestInitialize]
         public void SetUp()
         {
-            _aesProcessor = new AesDataProcessor();
+            _blockProcessor = new BlockDataProcessor();
         }
 
         [TestMethod]
         public void ConvertToBlocks_WhenCalledWithNotEmptyData_ShouldReturnListOfColumnMajorBlocks()
         {
-            List<byte[,]> result = _aesProcessor.ConvertToBlocks(_flatData);
+            List<byte[,]> result = _blockProcessor.ConvertTo(_flatData);
             Assert.IsTrue(result.Count == _blocks.Count);
             for (int i = 0; i < result.Count; i++)
             {
@@ -48,7 +48,7 @@ namespace AesAlgorithmTest
         [TestMethod]
         public void ConvertToByteArray_WhenCalledWithNotEmptyData_ShouldReturnFlattedData()
         {
-            byte[] result = _aesProcessor.ConvertToByteArray(_blocks);
+            byte[] result = _blockProcessor.ConvertBack(_blocks);
             AssertArrayEquality(result, _paddedFlatData);
         }
 

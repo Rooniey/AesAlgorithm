@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Cryptography;
 using Cryptography.Constants;
@@ -25,7 +26,7 @@ namespace WpfGui.ViewModels
             _logger.Info("Initialized AesFormViewModel");
             CryptoService = cryptoService;
             Cipherkey = new AesCipherkeyCreate(new AesCipherkeyValidator());
-            TextSource = new TextSource(new TextDataSourceValidator());
+            TextSource = new Models.TextSource(new TextDataSourceValidator());
             FileDataSource = new FileSource(new FileDataSourceValidator());
         }
 
@@ -37,7 +38,7 @@ namespace WpfGui.ViewModels
             set => SetProperty(ref _cipherkey, value);
         }
 
-        private TextSource _textSource;
+        private Models.TextSource _textSource;
 
         public TextSource TextSource
         {
@@ -98,10 +99,8 @@ namespace WpfGui.ViewModels
             {
                 return !FileDataSource.HasErrors;
             }
-            else
-            {
-                return !TextSource.HasErrors;
-            }
+
+            return !TextSource.HasErrors;
 
         }
 
@@ -110,17 +109,26 @@ namespace WpfGui.ViewModels
             byte[] key = Cipherkey.Cipherkey.ToByteArray(Cipherkey.SelectedEncoding);
             if (IsFileEncryption)
             {
-               
+               IDataSource dataSource = new FileDataSource(FileDataSource.FilePath);
+               byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
+                using (var fs = new FileStream("testowy.txt", FileMode.CreateNew))
+                {
+                    fs.Write(encryptedBytes, 0, encryptedBytes.Length);
+                }
+                dataSource = new MemoryDataSource(encryptedBytes);
+                byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
+                using (var fs = new FileStream("testowy2.txt", FileMode.CreateNew))
+                {
+                    fs.Write(decryptedBytes, 0, decryptedBytes.Length);
+                }
             }
             else
             {
-                IDataSource dataSource = new TextDataSource() {Text = TextSource.Text, TextEncoding = TextSource.Encoding};
-
-
+                IDataSource dataSource = new TextDataSource(TextSource.Text, TextSource.Encoding);
                 byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
+                //TODO to HEX display
                 EncryptedString = System.Text.Encoding.UTF8.GetString(encryptedBytes);
-
-                dataSource = new MemoryDataSource() {Data = encryptedBytes};
+                dataSource = new MemoryDataSource(encryptedBytes);
                 byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
                 DecryptedString = decryptedBytes.ToText(TextSource.Encoding);
             }

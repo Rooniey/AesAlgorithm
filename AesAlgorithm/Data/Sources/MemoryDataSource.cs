@@ -2,7 +2,12 @@
 {
     public class MemoryDataSource : IDataSource
     {
-        public byte[] Data { get; set; }
+        public byte[] Data { get; }
+
+        public MemoryDataSource(byte[] sourceBytes)
+        {
+            Data = sourceBytes;
+        }
 
         public byte[] GetData()
         {

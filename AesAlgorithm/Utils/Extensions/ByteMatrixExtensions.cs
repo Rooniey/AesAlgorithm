@@ -1,9 +1,9 @@
 ﻿using System;
 using Cryptography.Constants;
 
-namespace Cryptography.Utils
+namespace Cryptography.Utils.Extensions
 {
-    public static class MatrixOperations
+    public static class ByteMatrixExtensions
     {
         public static void CircularRotateLeft(this byte[,] column)
         {
@@ -20,7 +20,6 @@ namespace Cryptography.Utils
 
             column[column.GetLength(0) - 1, 0] = tmp;
         }
-
 
         //return new instance of byte[,] representing operation's result
         public static byte[,] Multiply(this byte[,] a, byte[,] b)

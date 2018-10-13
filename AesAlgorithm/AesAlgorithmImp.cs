@@ -1,49 +1,37 @@
 using System.Collections.Generic;
 using Cryptography.Constants;
-using Cryptography.Utils;
+using Cryptography.Utils.Extensions;
+using Cryptography.Utils.KeyProvider;
 
 namespace Cryptography
 {
     public class AesAlgorithmImp
     {
+        private readonly IRoundKeyProvider _roundKeyProvider;
 
-        public AesAlgorithmImp(byte[] key)
+        public AesAlgorithmImp(IRoundKeyProvider keyProvider)
         {
-            _keys = KeyGen.GenerateKeys(KeyGen.ConvertToKeyMatrix(key));
-            switch (_keys[0].Length)
-            {
-                case 16:
-                    _numberOfRounds = 10;
-                    break;
-
-                case 24:
-                    _numberOfRounds = 12;
-                    break;
-
-                case 32:
-                    _numberOfRounds = 14;
-                    break;
-            }
-         
+            _roundKeyProvider = keyProvider;
         }
 
         public List<byte[,]> Encrypt(List<byte[,]> data)
         {
             List<byte[,]> result = new List<byte[,]>();
+            int standardRounds = _roundKeyProvider.KeysNumber - 1;
 
             foreach (var dataPart in data)
             {
-                AddRoundKey(dataPart, _keys[0]);
-                for (int i = 1; i < _numberOfRounds; i++)
+                AddRoundKey(dataPart, _roundKeyProvider.GetKey(0));
+                for (int i = 1; i < standardRounds; i++)
                 {                   
                     SubstituteBytes(dataPart);
                     ShiftRows(dataPart);
                     MixColumns(dataPart);
-                    AddRoundKey(dataPart, _keys[i]);
+                    AddRoundKey(dataPart, _roundKeyProvider.GetKey(i));
                 }
                 SubstituteBytes(dataPart);
                 ShiftRows(dataPart);
-                AddRoundKey(dataPart, _keys[_numberOfRounds]);
+                AddRoundKey(dataPart, _roundKeyProvider.GetKey(standardRounds));
 
                 result.Add(dataPart);
             }
@@ -54,23 +42,24 @@ namespace Cryptography
         public List<byte[,]> Decrypt(List<byte[,]> encryptedData)
         {
             List<byte[,]> result = new List<byte[,]>();
+            int standardRounds = _roundKeyProvider.KeysNumber - 1;
 
             foreach (var dataPart in encryptedData)
             {
 
-                AddRoundKey(dataPart, _keys[_numberOfRounds]);
+                AddRoundKey(dataPart, _roundKeyProvider.GetKey(standardRounds));
 
-                for (int i = _numberOfRounds -1; i > 0; i--)
+                for (int i = standardRounds - 1; i > 0; i--)
                 {
                     ReverseSubstituteBytes(dataPart);
                     ReverseShiftRows(dataPart);
-                    AddRoundKey(dataPart, _keys[i]);
+                    AddRoundKey(dataPart, _roundKeyProvider.GetKey(i));
                     InverseMixColumns(dataPart);
                 }
 
                 ReverseSubstituteBytes(dataPart);
                 ReverseShiftRows(dataPart);
-                AddRoundKey(dataPart, _keys[0]);
+                AddRoundKey(dataPart, _roundKeyProvider.GetKey(0));
 
                 result.Add(dataPart);
             }
@@ -146,7 +135,6 @@ namespace Cryptography
             }
         }
 
-
         public void MixColumns(byte[,] state)
         {
             for (int i = 0; i < AesParameters.STATE_COLUMNS; i++)
@@ -174,13 +162,9 @@ namespace Cryptography
                 for (int column = 0; column < AesParameters.STATE_COLUMNS; column++)
                 {
                     //XOR on corresponding bytes in state and roundKey matrix
-                    //pamietac o zmianie !!
                     state[row, column] = (byte)(state[row, column] ^ roundKey[row, column]);
                 }
             }
         }
-
-        private int _numberOfRounds;
-        private List<byte[,]> _keys = new List<byte[,]>();
     }
 }

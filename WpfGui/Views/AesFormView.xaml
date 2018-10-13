@@ -208,7 +208,7 @@
                                              Foreground="{DynamicResource PrimaryHueMidBrush}"
                                              VerticalAlignment="Center" />
                 <TextBox
-                        x:Name="FileSource_FilePath"
+                        x:Name="FileDataSource_FilePath"
                         Margin="10 0 20 0"
                         MinWidth="250"
                         MaxWidth="300"

@@ -1,8 +1,6 @@
-﻿using System;
-using Cryptography.Utils;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Linq;
+using Cryptography.Utils.KeySchedule;
 using static AesAlgorithmTest.TestHelpers.ComparisonHelpers;
 
 namespace AesAlgorithmTest
@@ -10,27 +8,36 @@ namespace AesAlgorithmTest
     [TestClass]
     public class KeyScheduleTest
     {
+        private IKeyExpander _expander;
+        
         [TestMethod]
-        public void CheckKeyGeneration()
+        public void Check128BitKeyExpansion()
         {
-            List<byte[,]> keys = KeyGen.GenerateKeys(new byte[4, 4]);
-            byte[,] expectedLastKey = new byte[,]
-            {
-                {0xb4, 0x3e, 0x23, 0x6f}, 
-                {0xef, 0x92, 0xe9, 0x8f},
-                {0x5b, 0xe2, 0x51, 0x18},
-                {0xcb, 0x11, 0xcf, 0x8e}
-            };
-            AssertMatrixEquality(keys[keys.Count-1], expectedLastKey);
+            _expander = new AesKeyExpander128And192(16);
+            byte[] keySequence = _expander.ExpandKey(new byte[16]);
+            byte lastByte = keySequence[keySequence.Length - 1];
+            byte expectedLastByte = 0x8e;
+            Assert.AreEqual(lastByte, expectedLastByte);
         }
 
         [TestMethod]
-        public void CheckKeyGeneration2()
+        public void Check192BitKeyExpansion()
         {
-            byte[] keys = KeyGen.GenerateKeys(new byte[16]);
-            byte[] keys2 = KeyGen.GenerateKeys(new byte[24]);
-            byte[] key3 = KeyGen.GenerateKeys(new byte[32]);
-            Console.WriteLine("fajno");
+            _expander = new AesKeyExpander128And192(24);
+            byte[] keySequence = _expander.ExpandKey(new byte[24]);
+            byte lastByte = keySequence[keySequence.Length - 1];
+            byte expectedLastByte = 0x70;
+            Assert.AreEqual(lastByte, expectedLastByte);
+        }
+
+        [TestMethod]
+        public void Check256BitKeyExpansion()
+        {
+            _expander = new AesKeyExpander256(32);
+            byte[] keySequence = _expander.ExpandKey(new byte[32]);
+            byte lastByte = keySequence[keySequence.Length - 1];
+            byte expectedLastByte = 0x85;
+            Assert.AreEqual(lastByte, expectedLastByte);
         }
     }
 }

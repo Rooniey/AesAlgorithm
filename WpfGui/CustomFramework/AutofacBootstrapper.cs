@@ -27,7 +27,7 @@ namespace WpfGui.CustomFramework
             //  register the single event aggregator for this container
             builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
 
-            builder.Register<ISymmetricCryptoService>(c => new AesService(new AesDataProcessor()));
+            builder.Register<ISymmetricCryptoService>(c => new AesService());
 
             //builder.Register<AesParameterValidator>(c => new AesParameterValidator()).SingleInstance();
 
