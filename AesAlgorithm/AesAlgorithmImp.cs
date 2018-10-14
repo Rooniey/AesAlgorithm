@@ -88,11 +88,7 @@ namespace Cryptography
             }
         }
 
-<<<<<<< Updated upstream
         public void ReverseSubstituteBytes(byte[,] a)
-=======
-        public void InversedSubstituteBytes(byte[,] a)
->>>>>>> Stashed changes
         {
             for (int i = 0; i < AesParameters.STATE_ROWS; i++)
             {

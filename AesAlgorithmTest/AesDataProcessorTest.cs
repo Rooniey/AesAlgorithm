@@ -8,7 +8,7 @@ namespace AesAlgorithmTest
     [TestClass]
     public class AesDataProcessorTest
     {
-        private BlockDataProcessor _blockProcessor;
+        private BlockPaddingProcessor _blockProcessor;
         private static readonly byte[] _flatData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
         private static readonly byte[] _paddedFlatData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         private static readonly List<byte[,]> _blocks = new List<byte[,]>
@@ -31,7 +31,7 @@ namespace AesAlgorithmTest
         [TestInitialize]
         public void SetUp()
         {
-            _blockProcessor = new BlockDataProcessor();
+            _blockProcessor = new BlockPaddingProcessor();
         }
 
         [TestMethod]

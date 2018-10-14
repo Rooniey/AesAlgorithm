@@ -5,16 +5,24 @@ using Cryptography.Constants;
 
 namespace Cryptography.Data.Processors
 {
-    public class BlockDataProcessor : IConvertProcessor<List<byte[,]>, byte[]>
+    public class BlockPaddingProcessor : IConvertProcessor<List<byte[,]>, byte[]>
     {
         public List<byte[,]> ConvertTo(byte[] flatData)
         {
             if (flatData == null || flatData.Length == 0)
             {
-                throw new ArgumentException("BlockDataProcessor (ConvertToAesBlocks): no data to process (null or empty)");
+                throw new ArgumentException("BlockPaddingProcessor (ConvertToAesBlocks): no data to process (null or empty)");
             }
 
-            List<byte> paddedFlatData = PadDataWithZeroes(flatData);
+            List<byte> paddedFlatData = flatData.ToList();
+
+            int numberOfPaddingBytes = AesParameters.BYTES_IN_BLOCK - flatData.Length % AesParameters.BYTES_IN_BLOCK;
+            for (int i = 0; i < numberOfPaddingBytes % 16; i++)
+            {
+                paddedFlatData.Add(0);
+            }
+            byte numberOfPaddedBytes = (byte)numberOfPaddingBytes;
+
             int numberOfBlocks = paddedFlatData.Count / 16;
 
             List<byte[,]> blocks = new List<byte[,]>(numberOfBlocks);
@@ -28,9 +36,12 @@ namespace Cryptography.Data.Processors
                     block[j % AesParameters.STATE_ROWS, j / AesParameters.STATE_COLUMNS] =
                         paddedFlatData[i * AesParameters.BYTES_IN_BLOCK + j];
                 }
+
                 blocks.Add(block);
             }
-
+            byte[,] stateBlockWithPaddings = new byte[AesParameters.STATE_ROWS, AesParameters.STATE_COLUMNS];
+            stateBlockWithPaddings[0, 0] = numberOfPaddedBytes;
+            blocks.Add(stateBlockWithPaddings);
             return blocks;
         }
 
@@ -38,10 +49,11 @@ namespace Cryptography.Data.Processors
         {
             if (blocks == null || blocks.Count == 0)
             {
-                throw new ArgumentException("BlockDataProcessor (ConvertToByteArray): no data to process (null or empty)");
+                throw new ArgumentException("BlockPaddingProcessor (ConvertToByteArray): no data to process (null or empty)");
             }
             
             byte[] flatData = new byte[blocks.Count * AesParameters.BYTES_IN_BLOCK];
+            int numberToRemove = (int)(blocks.ElementAt(blocks.Count - 1)[0, 0]);
 
             for (int i = 0; i < blocks.Count; i++)
             {
@@ -51,19 +63,8 @@ namespace Cryptography.Data.Processors
                         j / AesParameters.STATE_COLUMNS];
                 }
             }
+            Array.Resize(ref flatData, flatData.Length - (16 + numberToRemove));
             return flatData;
-        }
-
-        private List<byte> PadDataWithZeroes(byte[] data)
-        {
-            List<byte> paddedData = data.ToList();
-            int numberOfPaddingBytes = AesParameters.BYTES_IN_BLOCK - data.Length % AesParameters.BYTES_IN_BLOCK;
-            for (int i = 0; i < numberOfPaddingBytes % 16; i++)
-            {
-                paddedData.Add(0);
-            }
-            //TODO place to save number of paddings to next array 
-            return paddedData;
         }
     }
 }
