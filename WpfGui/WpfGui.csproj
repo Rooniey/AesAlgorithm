@@ -93,6 +93,8 @@
     <Compile Include="CustomFramework\ValidatableBindableBase.cs" />
     <Compile Include="Models\FileSource.cs" />
     <Compile Include="Models\TextSource.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\IFileService.cs" />
     <Compile Include="Utility\BoolInverseConverter.cs" />
     <Compile Include="Utility\BoolInverseVisibilityConverter.cs" />
     <Compile Include="Utility\BoolToVisibilityConverter.cs" />

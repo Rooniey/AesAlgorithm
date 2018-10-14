@@ -220,13 +220,23 @@
             </StackPanel>
         </Grid>
 
-        <Button
+        <StackPanel 
             Grid.Row="1"
             Grid.Column="1"
-            x:Name="Encrypt"
-            Margin="0 30 0 32"
-            HorizontalAlignment="Right"
-            Style="{StaticResource MaterialDesignRaisedDarkButton}"
-            Width="200">Encrypt</Button>
+            Orientation="Horizontal"
+            HorizontalAlignment="Right">
+            <Button
+                x:Name="Encrypt"
+                Margin="0 30 20 32"
+                HorizontalAlignment="Right"
+                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                Width="200">Encrypt</Button>
+            <Button
+                x:Name="Decrypt"
+                Margin="0 30 0 32"
+                HorizontalAlignment="Right"
+                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                Width="200">Decrypt</Button>
+        </StackPanel>
     </Grid>
 </UserControl>
