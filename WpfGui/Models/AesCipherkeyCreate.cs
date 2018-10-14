@@ -9,9 +9,10 @@ namespace WpfGui.Models
     {
         public AesCipherkeyCreate(AbstractValidator<AesCipherkeyCreate> validator) : base(validator)
         {
+            Cipherkey = string.Empty;
         }
 
-        private string _cipherkey = "";
+        private string _cipherkey;
 
         public string Cipherkey
         {

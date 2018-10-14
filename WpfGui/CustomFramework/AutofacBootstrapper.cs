@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cryptography;
 using Cryptography.Data.Processors;
+using WpfGui.Services;
 
 namespace WpfGui.CustomFramework
 {
@@ -28,6 +29,7 @@ namespace WpfGui.CustomFramework
             builder.Register<IEventAggregator>(c => new EventAggregator()).InstancePerLifetimeScope();
 
             builder.Register<ISymmetricCryptoService>(c => new AesService());
+            builder.Register<IFileService>(c => new FileService());
 
             //builder.Register<AesParameterValidator>(c => new AesParameterValidator()).SingleInstance();
 

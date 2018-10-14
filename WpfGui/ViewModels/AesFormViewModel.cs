@@ -1,34 +1,44 @@
-﻿using Caliburn.Micro;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Caliburn.Micro;
 using Cryptography;
 using Cryptography.Constants;
 using Cryptography.Data.Sources;
 using Cryptography.Utils;
+using Microsoft.Win32;
 using WpfGui.CustomFramework;
 using WpfGui.Models;
+using WpfGui.Services;
 using WpfGui.Validators;
 using static Cryptography.Utils.TextUtility;
-using FileSource = WpfGui.Models.FileSource;
 
 namespace WpfGui.ViewModels
 {
     public class AesFormViewModel : BindableBase
     {
         private ILog _logger = LogManager.GetLog(typeof(AesFormViewModel));
-        public ISymmetricCryptoService CryptoService { get; private set; }
+        private readonly ISymmetricCryptoService _cryptoService;
+        private readonly IFileService _fileService;
 
-        public AesFormViewModel(ISymmetricCryptoService cryptoService)
+        public enum Mode
+        {
+            Encrypt, 
+            Decrypt
+        }
+
+        public AesFormViewModel(ISymmetricCryptoService cryptoService, IFileService fileService)
         {
             _logger.Info("Initialized AesFormViewModel");
-            CryptoService = cryptoService;
+            _cryptoService = cryptoService;
+            _fileService = fileService;
             Cipherkey = new AesCipherkeyCreate(new AesCipherkeyValidator());
-            TextSource = new Models.TextSource(new TextDataSourceValidator());
+            TextSource = new TextSource(new TextDataSourceValidator());
             FileDataSource = new FileSource(new FileDataSourceValidator());
         }
+
+        #region EXPOSED MODELS
 
         private AesCipherkeyCreate _cipherkey;
 
@@ -38,7 +48,7 @@ namespace WpfGui.ViewModels
             set => SetProperty(ref _cipherkey, value);
         }
 
-        private Models.TextSource _textSource;
+        private TextSource _textSource;
 
         public TextSource TextSource
         {
@@ -81,6 +91,8 @@ namespace WpfGui.ViewModels
         public List<int> KeyLengths => AesParameters.KEY_LENGTHS.ToList();
         public List<Encoding> Encodings => Enum.GetValues(typeof(Encoding)).OfType<Encoding>().ToList();
 
+        #endregion
+
         public void ChooseFile()
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
@@ -92,46 +104,69 @@ namespace WpfGui.ViewModels
             }
         }
 
-        public bool CanEncrypt()
-        {
-            if (Cipherkey.HasErrors) return false;
-            if (IsFileEncryption)
-            {
-                return !FileDataSource.HasErrors;
-            }
-
-            return !TextSource.HasErrors;
-
-        }
-
         public void Encrypt()
         {
-            byte[] key = Cipherkey.Cipherkey.ToByteArray(Cipherkey.SelectedEncoding);
+            byte[] encryptedBytes = _cryptoService.Encrypt(GetKey(), GetDataSource(Mode.Encrypt));
+            RedirectOutput(encryptedBytes, Mode.Encrypt);
+        }
+
+        public void Decrypt()
+        {
+            byte[] decryptedBytes = _cryptoService.Decrypt(GetKey(), GetDataSource(Mode.Decrypt));
+            RedirectOutput(decryptedBytes, Mode.Decrypt);
+        }
+
+        private void RedirectOutput(byte[] data, Mode mode)
+        {
             if (IsFileEncryption)
             {
-               IDataSource dataSource = new FileDataSource(FileDataSource.FilePath);
-               byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
-                using (var fs = new FileStream("testowy.txt", FileMode.CreateNew))
+                string filePath;
+                if (mode == Mode.Encrypt)
                 {
-                    fs.Write(encryptedBytes, 0, encryptedBytes.Length);
+                    filePath = Regex.Replace(FileDataSource.FilePath, @"\..*$", "") + "-encrypted";
                 }
-                dataSource = new MemoryDataSource(encryptedBytes);
-                byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
-                using (var fs = new FileStream("testowy2.txt", FileMode.CreateNew))
+                else
                 {
-                    fs.Write(decryptedBytes, 0, decryptedBytes.Length);
+                    filePath = Regex.Replace(FileDataSource.FilePath, @"\..*$", "") + "-decrypted";
                 }
+                _fileService.SaveFile(data, filePath);
             }
             else
             {
-                IDataSource dataSource = new TextDataSource(TextSource.Text, TextSource.Encoding);
-                byte[] encryptedBytes = CryptoService.Encrypt(key, dataSource);
-                //TODO to HEX display
-                EncryptedString = System.Text.Encoding.UTF8.GetString(encryptedBytes);
-                dataSource = new MemoryDataSource(encryptedBytes);
-                byte[] decryptedBytes = CryptoService.Decrypt(key, dataSource);
-                DecryptedString = decryptedBytes.ToText(TextSource.Encoding);
+                if (mode == Mode.Encrypt)
+                {
+                    EncryptedString = BitConverter.ToString(data).Replace("-", "");
+                }
+                else
+                {
+                    DecryptedString = data.ToText(TextSource.Encoding);
+                }
             }
+
+        }
+
+        private IDataSource GetDataSource(Mode mode)
+        {
+            if (IsFileEncryption)
+            {
+                return new FileDataSource(FileDataSource.FilePath);
+            }
+
+            if (mode == Mode.Encrypt)
+            {
+                return new TextDataSource(TextSource.Text, TextSource.Encoding);
+            }
+
+            return new MemoryDataSource(Enumerable.Range(0, EncryptedString.Length)
+                    .Where(x => x % 2 == 0)
+                    .Select(x => Convert.ToByte(EncryptedString.Substring(x, 2), 16))
+                    .ToArray());
+                         
+        }
+
+        private byte[] GetKey()
+        {
+            return Cipherkey.Cipherkey.ToByteArray(Cipherkey.SelectedEncoding);
         }
     }
 }
