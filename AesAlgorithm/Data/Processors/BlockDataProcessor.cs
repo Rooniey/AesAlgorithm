@@ -62,6 +62,7 @@ namespace Cryptography.Data.Processors
             {
                 paddedData.Add(0);
             }
+            //TODO place to save number of paddings to next array 
             return paddedData;
         }
     }
